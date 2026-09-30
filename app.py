@@ -68,7 +68,7 @@ st.markdown(
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 :root{--ink:#0f172a;--muted:#64748b;--primary:#2563eb;--violet:#7c3aed;--cyan:#0891b2;--green:#059669;--surface:#ffffff;--line:#dbe4f0}
-*{font-family:Inter,"Segoe UI",sans-serif}.stApp{background:radial-gradient(circle at 6% 4%,rgba(37,99,235,.13),transparent 24%),radial-gradient(circle at 94% 8%,rgba(124,58,237,.10),transparent 22%),linear-gradient(180deg,#f8fbff 0%,#f1f5fb 52%,#eef3f9 100%)!important;color:var(--ink)!important}.block-container{max-width:1240px;padding-top:5rem!important;padding-bottom:4rem}.wf-title{font-size:3.6rem;font-weight:800;letter-spacing:-.055em;line-height:1;color:#0f172a!important;margin:0}.wf-title::after{content:"";display:block;width:74px;height:6px;border-radius:10px;margin-top:16px;background:linear-gradient(90deg,var(--primary),var(--violet),var(--cyan));animation:wfGlow 3s ease-in-out infinite}.wf-subtitle{color:var(--muted)!important;font-size:1.03rem;margin:1.15rem 0 2.5rem}.big{font-size:3.5rem;font-weight:800;letter-spacing:-.05em;background:linear-gradient(90deg,#1d4ed8,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.05;margin:.4rem 0}.muted{color:var(--muted)!important;margin:.45rem 0 1rem}.chart-heading{color:var(--ink)!important;font-size:1.02rem;font-weight:800;margin:1.45rem 0 .18rem}.chart-caption{color:var(--muted)!important;font-size:.78rem;margin-bottom:.65rem}h1,h2,h3,p,label,.stMarkdown{color:var(--ink)!important}h2,h3{letter-spacing:-.025em}[data-testid="stCaptionContainer"] p,[data-testid="stMetricLabel"] p{color:var(--muted)!important}[data-testid="stMetricValue"]{color:var(--ink)!important;font-weight:800!important}
+*{font-family:Inter,"Segoe UI",sans-serif}.stApp{background:radial-gradient(circle at 6% 4%,rgba(37,99,235,.13),transparent 24%),radial-gradient(circle at 94% 8%,rgba(124,58,237,.10),transparent 22%),linear-gradient(180deg,#f8fbff 0%,#f1f5fb 52%,#eef3f9 100%)!important;color:var(--ink)!important}.block-container{max-width:1240px;padding-top:5rem!important;padding-bottom:4rem}.wf-title{font-size:3.6rem;font-weight:800;letter-spacing:-.055em;line-height:1;color:#0f172a!important;margin:0}.wf-title::after{content:"";display:block;width:74px;height:6px;border-radius:10px;margin-top:16px;background:linear-gradient(90deg,var(--primary),var(--violet),var(--cyan));animation:wfGlow 3s ease-in-out infinite}.wf-subtitle{color:var(--muted)!important;font-size:1.03rem;margin:1.15rem 0 2.5rem}.big{font-size:3.5rem;font-weight:800;letter-spacing:-.05em;background:linear-gradient(90deg,#1d4ed8,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.05;margin:.4rem 0}.muted{color:var(--muted)!important;margin:.45rem 0 1rem}.analytics-title{font-size:1.65rem;font-weight:800;letter-spacing:-.03em;color:var(--ink)!important;margin:2.3rem 0 .2rem}.analytics-title::before{content:"";display:inline-block;width:6px;height:24px;border-radius:5px;background:linear-gradient(180deg,#2563eb,#7c3aed);margin-right:10px;vertical-align:-3px}.analytics-subtitle{color:var(--muted)!important;margin-bottom:1rem}.chart-heading{color:var(--ink)!important;font-size:1.02rem;font-weight:800;margin:.15rem 0 .18rem}.chart-caption{color:var(--muted)!important;font-size:.78rem;margin-bottom:.65rem}.task-section-space{height:.6rem}h1,h2,h3,p,label,.stMarkdown{color:var(--ink)!important}h2,h3{letter-spacing:-.025em}[data-testid="stCaptionContainer"] p,[data-testid="stMetricLabel"] p{color:var(--muted)!important}[data-testid="stMetricValue"]{color:var(--ink)!important;font-weight:800!important}
 [data-testid="stForm"],[data-testid="stVerticalBlockBorderWrapper"]{background:rgba(255,255,255,.88)!important;border:1px solid rgba(203,213,225,.75)!important;border-radius:20px!important;box-shadow:0 10px 35px rgba(15,23,42,.06),inset 0 1px 0 rgba(255,255,255,.75);backdrop-filter:blur(12px);transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}[data-testid="stForm"]{padding:22px}[data-testid="stVerticalBlockBorderWrapper"]:hover{transform:translateY(-2px);border-color:#b6c9e5!important;box-shadow:0 16px 38px rgba(15,23,42,.10)}
 [data-baseweb="input"]>div,[data-baseweb="select"]>div{background:#fff!important;border-color:#cbd5e1!important;border-radius:12px!important;transition:box-shadow .2s ease,border-color .2s ease}[data-baseweb="input"]>div:focus-within,[data-baseweb="select"]>div:focus-within{border-color:#60a5fa!important;box-shadow:0 0 0 4px rgba(37,99,235,.10)!important}[data-baseweb="input"] input,input{color:var(--ink)!important;-webkit-text-fill-color:var(--ink)!important;background:#fff!important}[data-baseweb="select"] *{color:var(--ink)!important}[data-baseweb="popover"],[role="listbox"],[role="option"]{background:#fff!important;color:var(--ink)!important}[data-testid="stDateInput"] input{color:var(--ink)!important;-webkit-text-fill-color:var(--ink)!important}
 .stFormSubmitButton>button,.stButton>button{background:linear-gradient(100deg,#2563eb,#4f46e5)!important;color:#fff!important;border:0!important;border-radius:12px!important;font-weight:700!important;box-shadow:0 8px 18px rgba(37,99,235,.20);transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}.stFormSubmitButton>button p,.stButton>button p{color:#fff!important}.stFormSubmitButton>button:hover,.stButton>button:hover{transform:translateY(-2px);filter:brightness(1.05);box-shadow:0 12px 24px rgba(37,99,235,.28)}.stFormSubmitButton>button:active,.stButton>button:active{transform:translateY(0)}
@@ -152,41 +152,6 @@ with right:
         sum(1 for t in visible if t["priority"] == "Haute" and not t["done"]),
     )
 
-    st.markdown(
-        '<div class="chart-heading">Performance sur 7 jours</div>'
-        '<div class="chart-caption">Évolution quotidienne des tâches terminées</div>',
-        unsafe_allow_html=True,
-    )
-    chart_data = last_7_days_chart_data(st.session_state.tasks)
-    st.area_chart(
-        chart_data,
-        x="Jour",
-        y="Terminées",
-        color="#2563EB",
-        height=235,
-    )
-
-    priority_data = {
-        "Priorité": ["Haute", "Normale", "Basse"],
-        "Tâches": [
-            sum(1 for t in visible if t["priority"] == "Haute"),
-            sum(1 for t in visible if t["priority"] == "Normale"),
-            sum(1 for t in visible if t["priority"] == "Basse"),
-        ],
-    }
-    if sum(priority_data["Tâches"]) > 0:
-        st.markdown(
-            '<div class="chart-heading">Répartition des priorités</div>'
-            '<div class="chart-caption">Charge de travail pour la période sélectionnée</div>',
-            unsafe_allow_html=True,
-        )
-        st.bar_chart(
-            priority_data,
-            x="Priorité",
-            y="Tâches",
-            color="#7C3AED",
-            height=220,
-        )
 
     if visible:
         counts = {}
@@ -195,6 +160,39 @@ with right:
         st.caption("Répartition par type")
         for k, v in sorted(counts.items(), key=lambda x: -x[1]):
             st.write(f"{k}: **{v}**")
+
+# Analyse visuelle en pleine largeur, séparée de la synthèse compacte
+st.markdown('<div class="analytics-title">Analyse de performance</div><div class="analytics-subtitle">Lecture rapide et claire de ton activité professionnelle</div>', unsafe_allow_html=True)
+
+chart_data = last_7_days_chart_data(st.session_state.tasks)
+chart_total = sum(chart_data["Terminées"])
+
+chart_left, chart_right = st.columns([1.65, 1])
+with chart_left:
+    with st.container(border=True):
+        st.markdown('<div class="chart-heading">Tâches terminées sur les 7 derniers jours</div><div class="chart-caption">Une barre = le nombre de tâches clôturées ce jour-là</div>', unsafe_allow_html=True)
+        if chart_total == 0:
+            st.info("Aucune tâche terminée sur les 7 derniers jours. Le graphique apparaîtra dès qu'une tâche sera clôturée.")
+        else:
+            st.bar_chart(chart_data, x="Jour", y="Terminées", color="#2563EB", height=300)
+
+with chart_right:
+    with st.container(border=True):
+        st.markdown('<div class="chart-heading">Répartition des priorités</div><div class="chart-caption">Nombre de tâches par niveau sur la période sélectionnée</div>', unsafe_allow_html=True)
+        priority_data = {
+            "Priorité": ["Haute", "Normale", "Basse"],
+            "Tâches": [
+                sum(1 for t in visible if t["priority"] == "Haute"),
+                sum(1 for t in visible if t["priority"] == "Normale"),
+                sum(1 for t in visible if t["priority"] == "Basse"),
+            ],
+        }
+        if sum(priority_data["Tâches"]) == 0:
+            st.info("Aucune tâche sur la période sélectionnée.")
+        else:
+            st.bar_chart(priority_data, x="Priorité", y="Tâches", color="#7C3AED", height=300)
+
+st.markdown('<div class="task-section-space"></div>', unsafe_allow_html=True)
 
 with left:
     st.subheader(f"Mes tâches · {period}")
