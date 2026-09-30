@@ -66,39 +66,16 @@ load_tasks()
 st.markdown(
     """
 <style>
-.stApp { background:#f4f7fb !important; color:#172033 !important; }
-.block-container { max-width:1200px; padding-top:4.5rem !important; padding-bottom:3rem; }
-.wf-title { font-size:3rem; font-weight:800; color:#172033 !important; line-height:1.15; padding-top:.35rem; margin:0 0 .7rem 0; }
-.wf-subtitle { color:#667085 !important; margin:0 0 2.25rem 0; line-height:1.5; }
-.big { font-size:3rem; font-weight:800; color:#172033 !important; line-height:1.1; margin-top:.35rem; }
-.muted { color:#667085 !important; margin:.3rem 0 .8rem; }
-.chart-heading { color:#172033; font-size:1rem; font-weight:700; margin:1.25rem 0 .1rem; }
-.chart-caption { color:#667085; font-size:.8rem; margin-bottom:.5rem; }
-h1,h2,h3,p,label,.stMarkdown { color:#172033 !important; }
-[data-testid="stCaptionContainer"] p { color:#667085 !important; }
-[data-testid="stMetricLabel"] p { color:#667085 !important; }
-[data-testid="stMetricValue"] { color:#172033 !important; }
-[data-testid="stForm"] { background:#ffffff !important; border:1px solid #dbe3ee !important; border-radius:16px; padding:20px; }
-[data-testid="stVerticalBlockBorderWrapper"] { background:#ffffff !important; border-color:#dbe3ee !important; border-radius:14px !important; }
-[data-baseweb="input"] > div, [data-baseweb="select"] > div { background:#ffffff !important; border-color:#cbd5e1 !important; }
-[data-baseweb="input"] input, input { color:#172033 !important; -webkit-text-fill-color:#172033 !important; background:#ffffff !important; }
-[data-baseweb="select"] * { color:#172033 !important; }
-[data-baseweb="popover"], [role="listbox"], [role="option"] { background:#ffffff !important; color:#172033 !important; }
-[data-testid="stDateInput"] input { color:#172033 !important; -webkit-text-fill-color:#172033 !important; }
-.stFormSubmitButton > button, .stButton > button { background:#2563eb !important; color:#ffffff !important; border:1px solid #2563eb !important; font-weight:700; }
-.stFormSubmitButton > button p, .stButton > button p { color:#ffffff !important; }
-.stFormSubmitButton > button:hover, .stButton > button:hover { background:#1d4ed8 !important; border-color:#1d4ed8 !important; }
-[data-testid="stSegmentedControl"] { background:transparent !important; }
-[data-testid="stSegmentedControl"] button { background:#ffffff !important; color:#344054 !important; border-color:#cbd5e1 !important; }
-[data-testid="stSegmentedControl"] button p { color:#344054 !important; }
-[data-testid="stSegmentedControl"] button[aria-pressed="true"] { background:#2563eb !important; color:#ffffff !important; }
-[data-testid="stSegmentedControl"] button[aria-pressed="true"] p { color:#ffffff !important; }
-[data-testid="stProgressBar"] > div > div { background:#2563eb !important; }
-[data-testid="stAlert"] { background:#eaf2ff !important; color:#173b70 !important; border:1px solid #bfd5fa !important; }
-[data-testid="stAlert"] p { color:#173b70 !important; }
-[data-testid="stCheckbox"] label span { color:#172033 !important; }
-[data-testid="stVegaLiteChart"] { background:#ffffff; border:1px solid #dbe3ee; border-radius:14px; padding:8px; }
-hr { border-color:#dbe3ee !important; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+:root{--ink:#0f172a;--muted:#64748b;--primary:#2563eb;--violet:#7c3aed;--cyan:#0891b2;--green:#059669;--surface:#ffffff;--line:#dbe4f0}
+*{font-family:Inter,"Segoe UI",sans-serif}.stApp{background:radial-gradient(circle at 6% 4%,rgba(37,99,235,.13),transparent 24%),radial-gradient(circle at 94% 8%,rgba(124,58,237,.10),transparent 22%),linear-gradient(180deg,#f8fbff 0%,#f1f5fb 52%,#eef3f9 100%)!important;color:var(--ink)!important}.block-container{max-width:1240px;padding-top:5rem!important;padding-bottom:4rem}.wf-title{font-size:3.6rem;font-weight:800;letter-spacing:-.055em;line-height:1;color:#0f172a!important;margin:0}.wf-title::after{content:"";display:block;width:74px;height:6px;border-radius:10px;margin-top:16px;background:linear-gradient(90deg,var(--primary),var(--violet),var(--cyan));animation:wfGlow 3s ease-in-out infinite}.wf-subtitle{color:var(--muted)!important;font-size:1.03rem;margin:1.15rem 0 2.5rem}.big{font-size:3.5rem;font-weight:800;letter-spacing:-.05em;background:linear-gradient(90deg,#1d4ed8,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.05;margin:.4rem 0}.muted{color:var(--muted)!important;margin:.45rem 0 1rem}.chart-heading{color:var(--ink)!important;font-size:1.02rem;font-weight:800;margin:1.45rem 0 .18rem}.chart-caption{color:var(--muted)!important;font-size:.78rem;margin-bottom:.65rem}h1,h2,h3,p,label,.stMarkdown{color:var(--ink)!important}h2,h3{letter-spacing:-.025em}[data-testid="stCaptionContainer"] p,[data-testid="stMetricLabel"] p{color:var(--muted)!important}[data-testid="stMetricValue"]{color:var(--ink)!important;font-weight:800!important}
+[data-testid="stForm"],[data-testid="stVerticalBlockBorderWrapper"]{background:rgba(255,255,255,.88)!important;border:1px solid rgba(203,213,225,.75)!important;border-radius:20px!important;box-shadow:0 10px 35px rgba(15,23,42,.06),inset 0 1px 0 rgba(255,255,255,.75);backdrop-filter:blur(12px);transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}[data-testid="stForm"]{padding:22px}[data-testid="stVerticalBlockBorderWrapper"]:hover{transform:translateY(-2px);border-color:#b6c9e5!important;box-shadow:0 16px 38px rgba(15,23,42,.10)}
+[data-baseweb="input"]>div,[data-baseweb="select"]>div{background:#fff!important;border-color:#cbd5e1!important;border-radius:12px!important;transition:box-shadow .2s ease,border-color .2s ease}[data-baseweb="input"]>div:focus-within,[data-baseweb="select"]>div:focus-within{border-color:#60a5fa!important;box-shadow:0 0 0 4px rgba(37,99,235,.10)!important}[data-baseweb="input"] input,input{color:var(--ink)!important;-webkit-text-fill-color:var(--ink)!important;background:#fff!important}[data-baseweb="select"] *{color:var(--ink)!important}[data-baseweb="popover"],[role="listbox"],[role="option"]{background:#fff!important;color:var(--ink)!important}[data-testid="stDateInput"] input{color:var(--ink)!important;-webkit-text-fill-color:var(--ink)!important}
+.stFormSubmitButton>button,.stButton>button{background:linear-gradient(100deg,#2563eb,#4f46e5)!important;color:#fff!important;border:0!important;border-radius:12px!important;font-weight:700!important;box-shadow:0 8px 18px rgba(37,99,235,.20);transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}.stFormSubmitButton>button p,.stButton>button p{color:#fff!important}.stFormSubmitButton>button:hover,.stButton>button:hover{transform:translateY(-2px);filter:brightness(1.05);box-shadow:0 12px 24px rgba(37,99,235,.28)}.stFormSubmitButton>button:active,.stButton>button:active{transform:translateY(0)}
+[data-testid="stSegmentedControl"]{background:#e9eef7!important;border-radius:14px!important;padding:4px!important;box-shadow:inset 0 1px 3px rgba(15,23,42,.06)}[data-testid="stSegmentedControl"] button{background:transparent!important;color:#475569!important;border:0!important;border-radius:10px!important;transition:all .2s ease}[data-testid="stSegmentedControl"] button p{color:#475569!important}[data-testid="stSegmentedControl"] button[aria-pressed="true"]{background:#fff!important;box-shadow:0 5px 12px rgba(15,23,42,.10)!important}[data-testid="stSegmentedControl"] button[aria-pressed="true"] p{color:#1d4ed8!important;font-weight:800!important}
+[data-testid="stProgress"]{margin:.7rem 0 1.15rem}[data-testid="stProgress"]>div>div{background:#e2e8f0!important;border-radius:99px!important}[data-testid="stProgress"]>div>div>div{background:linear-gradient(90deg,#2563eb,#7c3aed,#06b6d4)!important;border-radius:99px!important;transition:width .7s cubic-bezier(.2,.8,.2,1)}
+[data-testid="stMetric"]{background:linear-gradient(145deg,#fff,#f8fbff);border:1px solid #e1e8f2;border-radius:16px;padding:13px 14px;box-shadow:0 6px 18px rgba(15,23,42,.045);transition:transform .22s ease,box-shadow .22s ease}[data-testid="stMetric"]:hover{transform:translateY(-3px);box-shadow:0 12px 24px rgba(15,23,42,.08)}[data-testid="stAlert"]{background:linear-gradient(110deg,#eff6ff,#eef2ff)!important;color:#173b70!important;border:1px solid #c7d9f7!important;border-radius:14px!important}[data-testid="stAlert"] p{color:#173b70!important}[data-testid="stCheckbox"] label span{color:var(--ink)!important}[data-testid="stVegaLiteChart"]{background:linear-gradient(180deg,#fff,#f8fbff);border:1px solid #dfe7f2;border-radius:18px;padding:10px;box-shadow:0 10px 25px rgba(15,23,42,.05);overflow:hidden}hr{border-color:#dbe4f0!important;margin-top:2rem!important}
+@keyframes wfGlow{0%,100%{transform:scaleX(1);opacity:.9}50%{transform:scaleX(1.25);opacity:1}}@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}.block-container>div{animation:fadeUp .45s ease both}@media(max-width:800px){.block-container{padding-top:4.5rem!important}.wf-title{font-size:2.7rem}[data-testid="stMetric"]{padding:10px}.big{font-size:3rem}}
 </style>
 """,
     unsafe_allow_html=True,
@@ -176,18 +153,40 @@ with right:
     )
 
     st.markdown(
-        '<div class="chart-heading">Évolution sur 7 jours</div>'
-        '<div class="chart-caption">Nombre de tâches terminées par jour</div>',
+        '<div class="chart-heading">Performance sur 7 jours</div>'
+        '<div class="chart-caption">Évolution quotidienne des tâches terminées</div>',
         unsafe_allow_html=True,
     )
     chart_data = last_7_days_chart_data(st.session_state.tasks)
-    st.line_chart(
+    st.area_chart(
         chart_data,
         x="Jour",
         y="Terminées",
         color="#2563EB",
-        height=230,
+        height=235,
     )
+
+    priority_data = {
+        "Priorité": ["Haute", "Normale", "Basse"],
+        "Tâches": [
+            sum(1 for t in visible if t["priority"] == "Haute"),
+            sum(1 for t in visible if t["priority"] == "Normale"),
+            sum(1 for t in visible if t["priority"] == "Basse"),
+        ],
+    }
+    if sum(priority_data["Tâches"]) > 0:
+        st.markdown(
+            '<div class="chart-heading">Répartition des priorités</div>'
+            '<div class="chart-caption">Charge de travail pour la période sélectionnée</div>',
+            unsafe_allow_html=True,
+        )
+        st.bar_chart(
+            priority_data,
+            x="Priorité",
+            y="Tâches",
+            color="#7C3AED",
+            height=220,
+        )
 
     if visible:
         counts = {}
