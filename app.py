@@ -38,13 +38,42 @@ def rerun():
 load_tasks()
 st.markdown("""<style>
 .stApp{background:#07101e!important;color:#f8fafc!important}.block-container{max-width:1200px;padding-top:2rem}.wf-title{font-size:3rem;font-weight:800;color:#f8fafc!important;line-height:1.15}.wf-subtitle{color:#a9b7ca!important;margin:.35rem 0 2rem}.wf-card{background:#101b2d;border:1px solid #24334a;border-radius:18px;padding:20px;margin-bottom:16px}.muted{color:#a9b7ca!important}.big{font-size:48px;font-weight:800;color:#f8fafc!important}.task{background:#101b2d;border:1px solid #24334a;border-radius:14px;padding:13px;margin:8px 0}
-html,body,[class*="css"],.stMarkdown,.stText,.stCaption,p,label,h1,h2,h3{color:#f8fafc!important}
-[data-testid="stCaptionContainer"] p{color:#a9b7ca!important}
-[data-testid="stMetricLabel"] p{color:#a9b7ca!important}[data-testid="stMetricValue"]{color:#f8fafc!important}
-[data-baseweb="select"]>div,[data-baseweb="input"]>div,input{background:#111d30!important;color:#f8fafc!important;border-color:#33465f!important}
-.stButton>button,.stFormSubmitButton>button{background:#2563eb!important;color:#fff!important;border:1px solid #3b82f6!important;font-weight:700}.stButton>button:hover,.stFormSubmitButton>button:hover{background:#1d4ed8!important;color:#fff!important}
-[data-testid="stSegmentedControl"] button{background:#111d30!important;color:#dbe6f3!important;border-color:#33465f!important}[data-testid="stSegmentedControl"] button[aria-pressed="true"]{background:#2563eb!important;color:#fff!important}
-[data-testid="stAlert"]{background:#102746!important;color:#e7f1ff!important;border-color:#1f4f86!important}
+/* Palette claire et lisible, independante du theme utilisateur */
+.stApp { background:#f4f7fb !important; color:#172033 !important; }
+.block-container { max-width:1200px; padding-top:2rem; padding-bottom:3rem; }
+.wf-title { font-size:3rem; font-weight:800; color:#172033 !important; line-height:1.15; }
+.wf-subtitle { color:#667085 !important; margin:.35rem 0 2rem; }
+h1,h2,h3,p,label,.stMarkdown { color:#172033 !important; }
+[data-testid="stCaptionContainer"] p { color:#667085 !important; }
+[data-testid="stMetricLabel"] p { color:#667085 !important; }
+[data-testid="stMetricValue"] { color:#172033 !important; }
+[data-testid="stForm"] { background:#ffffff !important; border:1px solid #dbe3ee !important; border-radius:16px; padding:20px; }
+[data-testid="stVerticalBlockBorderWrapper"] { background:#ffffff !important; border-color:#dbe3ee !important; border-radius:14px !important; }
+/* champs */
+[data-baseweb="input"] > div, [data-baseweb="select"] > div { background:#ffffff !important; border-color:#cbd5e1 !important; }
+[data-baseweb="input"] input, input { color:#172033 !important; -webkit-text-fill-color:#172033 !important; background:#ffffff !important; }
+[data-baseweb="select"] * { color:#172033 !important; }
+[data-baseweb="popover"], [role="listbox"], [role="option"] { background:#ffffff !important; color:#172033 !important; }
+/* date input */
+[data-testid="stDateInput"] input { color:#172033 !important; -webkit-text-fill-color:#172033 !important; }
+/* bouton */
+.stFormSubmitButton > button, .stButton > button { background:#2563eb !important; color:#ffffff !important; border:1px solid #2563eb !important; font-weight:700; }
+.stFormSubmitButton > button p, .stButton > button p { color:#ffffff !important; }
+.stFormSubmitButton > button:hover, .stButton > button:hover { background:#1d4ed8 !important; border-color:#1d4ed8 !important; }
+/* periode */
+[data-testid="stSegmentedControl"] { background:transparent !important; }
+[data-testid="stSegmentedControl"] button { background:#ffffff !important; color:#344054 !important; border-color:#cbd5e1 !important; }
+[data-testid="stSegmentedControl"] button p { color:#344054 !important; }
+[data-testid="stSegmentedControl"] button[aria-pressed="true"] { background:#2563eb !important; color:#ffffff !important; }
+[data-testid="stSegmentedControl"] button[aria-pressed="true"] p { color:#ffffff !important; }
+/* progress */
+[data-testid="stProgressBar"] > div > div { background:#2563eb !important; }
+/* alert */
+[data-testid="stAlert"] { background:#eaf2ff !important; color:#173b70 !important; border:1px solid #bfd5fa !important; }
+[data-testid="stAlert"] p { color:#173b70 !important; }
+/* checkbox */
+[data-testid="stCheckbox"] label span { color:#172033 !important; }
+hr { border-color:#dbe3ee !important; }
 </style>""", unsafe_allow_html=True)
 
 st.markdown('<div class="wf-title">WorkFlow</div><div class="wf-subtitle">Mon espace d\'organisation professionnelle</div>', unsafe_allow_html=True)
