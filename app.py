@@ -37,7 +37,6 @@ def rerun():
 
 load_tasks()
 st.markdown("""<style>
-.stApp{background:#07101e!important;color:#f8fafc!important}.block-container{max-width:1200px;padding-top:2rem}.wf-title{font-size:3rem;font-weight:800;color:#f8fafc!important;line-height:1.15}.wf-subtitle{color:#a9b7ca!important;margin:.35rem 0 2rem}.wf-card{background:#101b2d;border:1px solid #24334a;border-radius:18px;padding:20px;margin-bottom:16px}.muted{color:#a9b7ca!important}.big{font-size:48px;font-weight:800;color:#f8fafc!important}.task{background:#101b2d;border:1px solid #24334a;border-radius:14px;padding:13px;margin:8px 0}
 /* Palette claire et lisible, independante du theme utilisateur */
 .stApp { background:#f4f7fb !important; color:#172033 !important; }
 .block-container { max-width:1200px; padding-top:2rem; padding-bottom:3rem; }
