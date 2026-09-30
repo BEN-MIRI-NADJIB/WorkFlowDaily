@@ -8,6 +8,8 @@ st.set_page_config(page_title="WorkFlow", layout="wide", initial_sidebar_state="
 DATA = Path("tasks.json")
 TYPES = ["Projet", "Réunion", "Administratif", "Développement", "Analyse", "Autre"]
 PRIORITIES = ["Basse", "Normale", "Haute"]
+PRIORITY_ORDER = {"Haute": 0, "Normale": 1, "Basse": 2}
+DISPLAY_LIMIT = 20
 DAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
 MONTHS = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
 
@@ -15,20 +17,26 @@ MONTHS = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Ao�
 def load_tasks():
     if "tasks" not in st.session_state:
         try:
-            st.session_state.tasks = json.loads(DATA.read_text(encoding="utf-8")) if DATA.exists() else []
-        except Exception:
+            raw = json.loads(DATA.read_text(encoding="utf-8")) if DATA.exists() else []
+            st.session_state.tasks = raw if isinstance(raw, list) else []
+        except (OSError, json.JSONDecodeError, TypeError):
             st.session_state.tasks = []
 
 
 def save_tasks():
     try:
-        DATA.write_text(json.dumps(st.session_state.tasks, ensure_ascii=False, indent=2), encoding="utf-8")
-    except Exception:
-        pass
+        temporary = DATA.with_suffix(".tmp")
+        temporary.write_text(json.dumps(st.session_state.tasks, ensure_ascii=False, indent=2), encoding="utf-8")
+        temporary.replace(DATA)
+    except OSError:
+        st.toast("Sauvegarde temporairement indisponible.")
 
 
 def parse_date(value):
-    return datetime.strptime(value, "%Y-%m-%d").date()
+    try:
+        return datetime.strptime(str(value), "%Y-%m-%d").date()
+    except (TypeError, ValueError):
+        return date.min
 
 
 def period_filter(task_date, period):
@@ -53,14 +61,26 @@ def tasks_for(group, value):
         month = MONTHS.index(value) + 1
         year = date.today().year
         return [t for t in st.session_state.tasks if parse_date(t["date"]).year == year and parse_date(t["date"]).month == month]
-    return [t for t in st.session_state.tasks if t["type"] == value]
+    return [t for t in st.session_state.tasks if t.get("type") == value]
 
 
 def task_rows(items, prefix):
     if not items:
         st.info("Aucune tâche.")
         return
-    for task in sorted(items, key=lambda x: (x["done"], x["date"], x["priority"])):
+    ordered = sorted(
+        items,
+        key=lambda x: (
+            x.get("done", False),
+            parse_date(x.get("date")),
+            PRIORITY_ORDER.get(x.get("priority"), 3),
+        ),
+    )
+    limit_key = f"{prefix}_limit"
+    if limit_key not in st.session_state:
+        st.session_state[limit_key] = DISPLAY_LIMIT
+    displayed = ordered[: st.session_state[limit_key]]
+    for task in displayed:
         with st.container(border=True):
             check, body, action = st.columns([0.08, 0.75, 0.17], vertical_alignment="center")
             state = check.checkbox("", value=task["done"], key=f"{prefix}_done_{task['id']}")
@@ -73,9 +93,14 @@ def task_rows(items, prefix):
             d = parse_date(task["date"])
             body.caption(f"{DAYS[d.weekday()]} {d.strftime('%d/%m')} · {task['type']} · {task['priority']}")
             if action.button("Supprimer", key=f"{prefix}_delete_{task['id']}", use_container_width=True):
-                st.session_state.tasks = [x for x in st.session_state.tasks if x["id"] != task["id"]]
+                st.session_state.tasks = [x for x in st.session_state.tasks if x.get("id") != task.get("id")]
                 save_tasks()
                 st.rerun()
+    if len(ordered) > len(displayed):
+        remaining = len(ordered) - len(displayed)
+        if st.button(f"Afficher {min(DISPLAY_LIMIT, remaining)} tâche(s) de plus", key=f"{prefix}_more", use_container_width=True):
+            st.session_state[limit_key] += DISPLAY_LIMIT
+            st.rerun()
 
 
 load_tasks()
@@ -155,11 +180,17 @@ st.markdown('<div class="quick-tip">Tout est accessible depuis cet écran, sans 
 
 filter_col, spacer = st.columns([2.2, 5.8])
 with filter_col:
-    period = st.segmented_control("Période", ["Jour","Semaine","Mois","Année"], default="Jour", label_visibility="collapsed") or "Jour"
-visible = [t for t in st.session_state.tasks if period_filter(t["date"], period)]
-done = sum(1 for t in visible if t["done"])
+    period = st.segmented_control(
+        "Période",
+        ["Jour", "Semaine", "Mois", "Année"],
+        default="Jour",
+        key="period_filter",
+        label_visibility="collapsed",
+    ) or "Jour"
+visible = [t for t in st.session_state.tasks if t.get("date") and period_filter(t.get("date"), period)]
+done = sum(1 for t in visible if t.get("done", False))
 total = len(visible)
-high = sum(1 for t in visible if t["priority"] == "Haute" and not t["done"])
+high = sum(1 for t in visible if t.get("priority") == "Haute" and not t.get("done", False))
 pct = round(done * 100 / total) if total else 0
 st.markdown(f'''<div class="kpis"><div class="kpi" style="--accent:#2563eb"><small>TOTAL</small><strong>{total}</strong><span>{period.lower()}</span></div><div class="kpi" style="--accent:#059669"><small>TERMINÉES</small><strong>{done}</strong><span>{pct}% effectué</span></div><div class="kpi" style="--accent:#7c3aed"><small>À FAIRE</small><strong>{total-done}</strong><span>restantes</span></div><div class="kpi" style="--accent:#dc2626"><small>URGENTES</small><strong>{high}</strong><span>priorité haute</span></div></div>''', unsafe_allow_html=True)
 
@@ -168,14 +199,25 @@ left, center, right = st.columns([1.2, 2.25, 1.2], gap="medium")
 with left:
     with st.container(border=True, height=545):
         st.markdown('<div class="panel-title">Organisation</div><div class="panel-sub">Choisis un filtre</div>', unsafe_allow_html=True)
-        group = st.radio("Classement", ["Jour","Mois","Catégorie"], horizontal=True, label_visibility="collapsed")
+        group = st.radio(
+            "Classement",
+            ["Jour", "Mois", "Catégorie"],
+            key="organization_group",
+            horizontal=True,
+            label_visibility="collapsed",
+        )
         if group == "Jour":
             options = DAYS
         elif group == "Mois":
             options = MONTHS
         else:
             options = TYPES
-        choice = st.selectbox("Rubrique", options, label_visibility="collapsed")
+        choice = st.selectbox(
+            "Rubrique",
+            options,
+            key=f"organization_choice_{group}",
+            label_visibility="collapsed",
+        )
         items = tasks_for(group, choice)
         st.markdown(f'<div class="compact-note"><b>{choice}</b> · {len(items)} tâche(s)</div>', unsafe_allow_html=True)
         task_rows(items, "organizer")
@@ -183,16 +225,22 @@ with left:
 with center:
     with st.container(border=True, height=545):
         st.markdown(f'<div class="panel-title">Tâches · {period}</div><div class="panel-sub">{total} élément(s), {done} terminé(s)</div>', unsafe_allow_html=True)
-        status = st.segmented_control("Statut", ["Toutes","À faire","Terminées"], default="Toutes", label_visibility="collapsed") or "Toutes"
+        status = st.segmented_control(
+            "Statut",
+            ["Toutes", "À faire", "Terminées"],
+            default="Toutes",
+            key="status_filter",
+            label_visibility="collapsed",
+        ) or "Toutes"
         shown = visible
-        if status == "À faire": shown = [t for t in visible if not t["done"]]
-        if status == "Terminées": shown = [t for t in visible if t["done"]]
+        if status == "À faire": shown = [t for t in visible if not t.get("done", False)]
+        if status == "Terminées": shown = [t for t in visible if t.get("done", False)]
         task_rows(shown, "main")
 
 with right:
     with st.container(border=True, height=545):
         st.markdown('<div class="panel-title">Priorités</div><div class="panel-sub">Charge de la période</div>', unsafe_allow_html=True)
-        counts = {p:sum(1 for t in visible if t["priority"] == p) for p in PRIORITIES}
+        counts = {p:sum(1 for t in visible if t.get("priority") == p) for p in PRIORITIES}
         st.metric("Haute", counts["Haute"])
         st.progress(counts["Haute"] / max(total,1), text="Haute")
         st.metric("Normale", counts["Normale"])
@@ -200,7 +248,7 @@ with right:
         st.metric("Basse", counts["Basse"])
         st.progress(counts["Basse"] / max(total,1), text="Basse")
         st.divider()
-        type_counts = {t:sum(1 for x in visible if x["type"] == t) for t in TYPES}
+        type_counts = {t:sum(1 for x in visible if x.get("type") == t) for t in TYPES}
         top_types = sorted(type_counts.items(), key=lambda x:x[1], reverse=True)[:3]
         st.markdown('<div class="panel-title">Top catégories</div>', unsafe_allow_html=True)
         for name, count in top_types:
