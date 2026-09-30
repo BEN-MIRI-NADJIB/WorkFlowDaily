@@ -8,6 +8,8 @@ st.set_page_config(page_title="WorkFlow", layout="wide", initial_sidebar_state="
 DATA = Path("tasks.json")
 TYPES = ["Projet", "Réunion", "Administratif", "Développement", "Analyse", "Autre"]
 PRIORITIES = ["Basse", "Normale", "Haute"]
+PRIORITY_ORDER = {"Haute": 0, "Normale": 1, "Basse": 2}
+DISPLAY_LIMIT = 20
 DAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
 MONTHS = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
 
@@ -15,20 +17,26 @@ MONTHS = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Ao�
 def load_tasks():
     if "tasks" not in st.session_state:
         try:
-            st.session_state.tasks = json.loads(DATA.read_text(encoding="utf-8")) if DATA.exists() else []
-        except Exception:
+            raw = json.loads(DATA.read_text(encoding="utf-8")) if DATA.exists() else []
+            st.session_state.tasks = raw if isinstance(raw, list) else []
+        except (OSError, json.JSONDecodeError, TypeError):
             st.session_state.tasks = []
 
 
 def save_tasks():
     try:
-        DATA.write_text(json.dumps(st.session_state.tasks, ensure_ascii=False, indent=2), encoding="utf-8")
-    except Exception:
-        pass
+        temporary = DATA.with_suffix(".tmp")
+        temporary.write_text(json.dumps(st.session_state.tasks, ensure_ascii=False, indent=2), encoding="utf-8")
+        temporary.replace(DATA)
+    except OSError:
+        st.toast("Sauvegarde temporairement indisponible.")
 
 
 def parse_date(value):
-    return datetime.strptime(value, "%Y-%m-%d").date()
+    try:
+        return datetime.strptime(str(value), "%Y-%m-%d").date()
+    except (TypeError, ValueError):
+        return date.min
 
 
 def period_filter(task_date, period):
@@ -53,14 +61,26 @@ def tasks_for(group, value):
         month = MONTHS.index(value) + 1
         year = date.today().year
         return [t for t in st.session_state.tasks if parse_date(t["date"]).year == year and parse_date(t["date"]).month == month]
-    return [t for t in st.session_state.tasks if t["type"] == value]
+    return [t for t in st.session_state.tasks if t.get("type") == value]
 
 
 def task_rows(items, prefix):
     if not items:
         st.info("Aucune tâche.")
         return
-    for task in sorted(items, key=lambda x: (x["done"], x["date"], x["priority"])):
+    ordered = sorted(
+        items,
+        key=lambda x: (
+            x.get("done", False),
+            parse_date(x.get("date")),
+            PRIORITY_ORDER.get(x.get("priority"), 3),
+        ),
+    )
+    limit_key = f"{prefix}_limit"
+    if limit_key not in st.session_state:
+        st.session_state[limit_key] = DISPLAY_LIMIT
+    displayed = ordered[: st.session_state[limit_key]]
+    for task in displayed:
         with st.container(border=True):
             check, body, action = st.columns([0.08, 0.75, 0.17], vertical_alignment="center")
             state = check.checkbox("", value=task["done"], key=f"{prefix}_done_{task['id']}")
@@ -72,10 +92,15 @@ def task_rows(items, prefix):
             body.markdown(title)
             d = parse_date(task["date"])
             body.caption(f"{DAYS[d.weekday()]} {d.strftime('%d/%m')} · {task['type']} · {task['priority']}")
-            if action.button("Supprimer", key=f"{prefix}_delete_{task['id']}", use_container_width=True):
-                st.session_state.tasks = [x for x in st.session_state.tasks if x["id"] != task["id"]]
+            if action.button("", key=f"{prefix}_delete_{task['id']}", icon=":material/delete:", help="Supprimer la tâche", use_container_width=True):
+                st.session_state.tasks = [x for x in st.session_state.tasks if x.get("id") != task.get("id")]
                 save_tasks()
                 st.rerun()
+    if len(ordered) > len(displayed):
+        remaining = len(ordered) - len(displayed)
+        if st.button(f"Afficher {min(DISPLAY_LIMIT, remaining)} tâche(s) de plus", key=f"{prefix}_more", use_container_width=True):
+            st.session_state[limit_key] += DISPLAY_LIMIT
+            st.rerun()
 
 
 load_tasks()
@@ -128,6 +153,27 @@ div[data-testid="stCheckbox"]{padding-top:.2rem}
 [data-testid="stProgress"]>div>div{background:#e8edf5!important;border-radius:20px!important}[data-testid="stProgress"]>div>div>div{background:linear-gradient(90deg,var(--blue),var(--blue2),var(--cyan))!important;border-radius:20px!important;transition:width .7s cubic-bezier(.2,.8,.2,1)}
 .compact-note{background:linear-gradient(110deg,#eef6ff,#f4f1ff);border:1px solid #d9e6fb;border-radius:12px;padding:.55rem .72rem;font-size:.7rem;color:#4d5e76;margin-bottom:.5rem;box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
 .quick-tip{font-size:.65rem;color:#7b899c;text-align:right;margin-top:-.1rem}
+
+/* Animated ambient background */
+.ambient-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;isolation:isolate}
+.ambient-bg .blob{position:absolute;display:block;border-radius:999px;filter:blur(72px);opacity:.24;will-change:transform;mix-blend-mode:multiply}
+.blob-blue{width:440px;height:440px;left:-110px;top:16%;background:linear-gradient(135deg,#60a5fa,#2563eb);animation:floatBlue 18s ease-in-out infinite alternate}
+.blob-violet{width:520px;height:520px;right:-140px;top:-120px;background:linear-gradient(135deg,#c4b5fd,#7c3aed);animation:floatViolet 22s ease-in-out infinite alternate}
+.blob-cyan{width:380px;height:380px;left:42%;bottom:-180px;background:linear-gradient(135deg,#67e8f9,#14b8a6);animation:floatCyan 20s ease-in-out infinite alternate}
+[data-testid="stAppViewContainer"],.block-container{position:relative;z-index:1}
+@keyframes floatBlue{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(180px,-55px,0) scale(1.12)}100%{transform:translate3d(80px,140px,0) scale(.96)}}
+@keyframes floatViolet{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-210px,120px,0) scale(.9)}100%{transform:translate3d(-80px,260px,0) scale(1.08)}}
+@keyframes floatCyan{0%{transform:translate3d(0,0,0) scale(.95)}50%{transform:translate3d(-170px,-150px,0) scale(1.15)}100%{transform:translate3d(170px,-85px,0) scale(1)}}
+/* Icon-only task actions */
+[data-testid="stButton"] button:has(span[data-testid="stIconMaterial"]){display:flex;align-items:center;justify-content:center;min-width:42px!important;padding:.5rem!important}
+[data-testid="stButton"] button:has(span[data-testid="stIconMaterial"]) span[data-testid="stIconMaterial"]{font-size:1.15rem!important;transition:transform .18s ease}
+[data-testid="stButton"] button:has(span[data-testid="stIconMaterial"]):hover span[data-testid="stIconMaterial"]{transform:scale(1.12) rotate(-4deg)}
+/* Accessible delete button color */
+[data-testid="stButton"] button[aria-label="Supprimer la tâche"]{background:linear-gradient(135deg,#fff1f2,#ffe4e6)!important;color:#e11d48!important;border:1px solid #fecdd3!important;box-shadow:none!important}
+[data-testid="stButton"] button[aria-label="Supprimer la tâche"] p,[data-testid="stButton"] button[aria-label="Supprimer la tâche"] span{color:#e11d48!important}
+[data-testid="stButton"] button[aria-label="Supprimer la tâche"]:hover{background:linear-gradient(135deg,#ffe4e6,#fecdd3)!important;box-shadow:0 8px 18px rgba(225,29,72,.16)!important}
+@media (prefers-reduced-motion:reduce){.ambient-bg .blob,.block-container>div{animation:none!important}.stButton>button,[data-baseweb="input"]>div,[data-baseweb="select"]>div{transition:none!important}}
+
 @keyframes enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .block-container>div{animation:enter .38s ease both}
 @media(max-width:1000px){.block-container{padding:1rem!important}.today{display:none}.kpis{grid-template-columns:1fr 1fr}.topbar{align-items:flex-start}}
@@ -136,6 +182,14 @@ div[data-testid="stCheckbox"]{padding-top:.2rem}
 """, unsafe_allow_html=True)
 
 now_label = date.today().strftime("%d/%m/%Y")
+st.markdown(
+    '<div class="ambient-bg" aria-hidden="true">'
+    '<span class="blob blob-blue"></span>'
+    '<span class="blob blob-violet"></span>'
+    '<span class="blob blob-cyan"></span>'
+    '</div>',
+    unsafe_allow_html=True,
+)
 st.markdown(f'<div class="topbar"><div><div class="brand"><span>Work</span>Flow</div><div class="tagline">Pilotez votre journée avec clarté</div></div><div class="today">Aujourd’hui · {now_label}</div></div>', unsafe_allow_html=True)
 
 st.markdown('<div class="section-label">AJOUT RAPIDE</div>', unsafe_allow_html=True)
@@ -145,7 +199,7 @@ with st.form("quick_add", clear_on_submit=True, border=True):
     task_type = c2.selectbox("Type", TYPES, label_visibility="collapsed")
     task_date = c3.date_input("Date", value=date.today(), label_visibility="collapsed")
     priority = c4.selectbox("Priorité", PRIORITIES, index=1, label_visibility="collapsed")
-    submitted = c5.form_submit_button("Ajouter", use_container_width=True)
+    submitted = c5.form_submit_button("Ajouter", icon=":material/add_task:", use_container_width=True)
     if submitted and title.strip():
         st.session_state.tasks.insert(0, {"id":str(datetime.now().timestamp()),"title":title.strip(),"type":task_type,"date":task_date.isoformat(),"priority":priority,"done":False})
         save_tasks()
@@ -155,11 +209,17 @@ st.markdown('<div class="quick-tip">Tout est accessible depuis cet écran, sans 
 
 filter_col, spacer = st.columns([2.2, 5.8])
 with filter_col:
-    period = st.segmented_control("Période", ["Jour","Semaine","Mois","Année"], default="Jour", label_visibility="collapsed") or "Jour"
-visible = [t for t in st.session_state.tasks if period_filter(t["date"], period)]
-done = sum(1 for t in visible if t["done"])
+    period = st.segmented_control(
+        "Période",
+        ["Jour", "Semaine", "Mois", "Année"],
+        default="Jour",
+        key="period_filter",
+        label_visibility="collapsed",
+    ) or "Jour"
+visible = [t for t in st.session_state.tasks if t.get("date") and period_filter(t.get("date"), period)]
+done = sum(1 for t in visible if t.get("done", False))
 total = len(visible)
-high = sum(1 for t in visible if t["priority"] == "Haute" and not t["done"])
+high = sum(1 for t in visible if t.get("priority") == "Haute" and not t.get("done", False))
 pct = round(done * 100 / total) if total else 0
 st.markdown(f'''<div class="kpis"><div class="kpi" style="--accent:#2563eb"><small>TOTAL</small><strong>{total}</strong><span>{period.lower()}</span></div><div class="kpi" style="--accent:#059669"><small>TERMINÉES</small><strong>{done}</strong><span>{pct}% effectué</span></div><div class="kpi" style="--accent:#7c3aed"><small>À FAIRE</small><strong>{total-done}</strong><span>restantes</span></div><div class="kpi" style="--accent:#dc2626"><small>URGENTES</small><strong>{high}</strong><span>priorité haute</span></div></div>''', unsafe_allow_html=True)
 
@@ -168,14 +228,25 @@ left, center, right = st.columns([1.2, 2.25, 1.2], gap="medium")
 with left:
     with st.container(border=True, height=545):
         st.markdown('<div class="panel-title">Organisation</div><div class="panel-sub">Choisis un filtre</div>', unsafe_allow_html=True)
-        group = st.radio("Classement", ["Jour","Mois","Catégorie"], horizontal=True, label_visibility="collapsed")
+        group = st.radio(
+            "Classement",
+            ["Jour", "Mois", "Catégorie"],
+            key="organization_group",
+            horizontal=True,
+            label_visibility="collapsed",
+        )
         if group == "Jour":
             options = DAYS
         elif group == "Mois":
             options = MONTHS
         else:
             options = TYPES
-        choice = st.selectbox("Rubrique", options, label_visibility="collapsed")
+        choice = st.selectbox(
+            "Rubrique",
+            options,
+            key=f"organization_choice_{group}",
+            label_visibility="collapsed",
+        )
         items = tasks_for(group, choice)
         st.markdown(f'<div class="compact-note"><b>{choice}</b> · {len(items)} tâche(s)</div>', unsafe_allow_html=True)
         task_rows(items, "organizer")
@@ -183,16 +254,22 @@ with left:
 with center:
     with st.container(border=True, height=545):
         st.markdown(f'<div class="panel-title">Tâches · {period}</div><div class="panel-sub">{total} élément(s), {done} terminé(s)</div>', unsafe_allow_html=True)
-        status = st.segmented_control("Statut", ["Toutes","À faire","Terminées"], default="Toutes", label_visibility="collapsed") or "Toutes"
+        status = st.segmented_control(
+            "Statut",
+            ["Toutes", "À faire", "Terminées"],
+            default="Toutes",
+            key="status_filter",
+            label_visibility="collapsed",
+        ) or "Toutes"
         shown = visible
-        if status == "À faire": shown = [t for t in visible if not t["done"]]
-        if status == "Terminées": shown = [t for t in visible if t["done"]]
+        if status == "À faire": shown = [t for t in visible if not t.get("done", False)]
+        if status == "Terminées": shown = [t for t in visible if t.get("done", False)]
         task_rows(shown, "main")
 
 with right:
     with st.container(border=True, height=545):
         st.markdown('<div class="panel-title">Priorités</div><div class="panel-sub">Charge de la période</div>', unsafe_allow_html=True)
-        counts = {p:sum(1 for t in visible if t["priority"] == p) for p in PRIORITIES}
+        counts = {p:sum(1 for t in visible if t.get("priority") == p) for p in PRIORITIES}
         st.metric("Haute", counts["Haute"])
         st.progress(counts["Haute"] / max(total,1), text="Haute")
         st.metric("Normale", counts["Normale"])
@@ -200,7 +277,7 @@ with right:
         st.metric("Basse", counts["Basse"])
         st.progress(counts["Basse"] / max(total,1), text="Basse")
         st.divider()
-        type_counts = {t:sum(1 for x in visible if x["type"] == t) for t in TYPES}
+        type_counts = {t:sum(1 for x in visible if x.get("type") == t) for t in TYPES}
         top_types = sorted(type_counts.items(), key=lambda x:x[1], reverse=True)[:3]
         st.markdown('<div class="panel-title">Top catégories</div>', unsafe_allow_html=True)
         for name, count in top_types:
