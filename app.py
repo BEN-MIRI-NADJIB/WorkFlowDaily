@@ -39,9 +39,9 @@ load_tasks()
 st.markdown("""<style>
 /* Palette claire et lisible, independante du theme utilisateur */
 .stApp { background:#f4f7fb !important; color:#172033 !important; }
-.block-container { max-width:1200px; padding-top:2rem; padding-bottom:3rem; }
-.wf-title { font-size:3rem; font-weight:800; color:#172033 !important; line-height:1.15; }
-.wf-subtitle { color:#667085 !important; margin:.35rem 0 2rem; }
+.block-container { max-width:1200px; padding-top:4.5rem !important; padding-bottom:3rem; }
+.wf-title { font-size:3rem; font-weight:800; color:#172033 !important; line-height:1.15; padding-top:.35rem; margin:0 0 .7rem 0; }
+.wf-subtitle { color:#667085 !important; margin:0 0 2.25rem 0; line-height:1.5; }
 h1,h2,h3,p,label,.stMarkdown { color:#172033 !important; }
 [data-testid="stCaptionContainer"] p { color:#667085 !important; }
 [data-testid="stMetricLabel"] p { color:#667085 !important; }
