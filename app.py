@@ -3,7 +3,7 @@ from datetime import date, datetime, timedelta
 import json
 from pathlib import Path
 
-st.set_page_config(page_title="WorkFlow", page_icon="💼", layout="wide")
+st.set_page_config(page_title="WorkFlow", layout="wide")
 
 DATA = Path("tasks.json")
 TYPES = ["Projet", "Réunion", "Administratif", "Développement", "Analyse", "Autre"]
@@ -37,11 +37,17 @@ def rerun():
 
 load_tasks()
 st.markdown("""<style>
-.stApp{background:#07101e}.block-container{max-width:1200px;padding-top:2rem}.wf-card{background:#101b2d;border:1px solid #24334a;border-radius:18px;padding:20px;margin-bottom:16px}.muted{color:#91a0b7}.big{font-size:48px;font-weight:800}.task{background:#101b2d;border:1px solid #24334a;border-radius:14px;padding:13px;margin:8px 0}
+.stApp{background:#07101e!important;color:#f8fafc!important}.block-container{max-width:1200px;padding-top:2rem}.wf-title{font-size:3rem;font-weight:800;color:#f8fafc!important;line-height:1.15}.wf-subtitle{color:#a9b7ca!important;margin:.35rem 0 2rem}.wf-card{background:#101b2d;border:1px solid #24334a;border-radius:18px;padding:20px;margin-bottom:16px}.muted{color:#a9b7ca!important}.big{font-size:48px;font-weight:800;color:#f8fafc!important}.task{background:#101b2d;border:1px solid #24334a;border-radius:14px;padding:13px;margin:8px 0}
+html,body,[class*="css"],.stMarkdown,.stText,.stCaption,p,label,h1,h2,h3{color:#f8fafc!important}
+[data-testid="stCaptionContainer"] p{color:#a9b7ca!important}
+[data-testid="stMetricLabel"] p{color:#a9b7ca!important}[data-testid="stMetricValue"]{color:#f8fafc!important}
+[data-baseweb="select"]>div,[data-baseweb="input"]>div,input{background:#111d30!important;color:#f8fafc!important;border-color:#33465f!important}
+.stButton>button,.stFormSubmitButton>button{background:#2563eb!important;color:#fff!important;border:1px solid #3b82f6!important;font-weight:700}.stButton>button:hover,.stFormSubmitButton>button:hover{background:#1d4ed8!important;color:#fff!important}
+[data-testid="stSegmentedControl"] button{background:#111d30!important;color:#dbe6f3!important;border-color:#33465f!important}[data-testid="stSegmentedControl"] button[aria-pressed="true"]{background:#2563eb!important;color:#fff!important}
+[data-testid="stAlert"]{background:#102746!important;color:#e7f1ff!important;border-color:#1f4f86!important}
 </style>""", unsafe_allow_html=True)
 
-st.title("💼 WorkFlow")
-st.caption("Mon espace d'organisation professionnelle")
+st.markdown('<div class="wf-title">WorkFlow</div><div class="wf-subtitle">Mon espace d\'organisation professionnelle</div>', unsafe_allow_html=True)
 
 left, right = st.columns([2.2, 1])
 with left:
